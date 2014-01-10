@@ -1,0 +1,7 @@
+// index for core scss files
+// Note there is a dependent style loading sequence.
+// Please don't alter the sequence below.
+
+@import 'core/core';
+@import 'webscss/team/colors';
+@import 'webscss/team/fonts';

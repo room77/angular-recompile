@@ -1,0 +1,458 @@
+#main_section {
+  width: $main_img_width;
+  display: inline-block;
+  position: relative;
+
+  @include shadow($common_shadow);
+}
+
+#splash_screen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: $main_img_width;
+  height: $main_img_height;
+  background-color: $wht;
+  margin-top: $main_img_width;
+  z-index: $splash_zidx;
+
+  @include btn();
+  @include opacity($default_opacity);
+  @include transition(margin-top $slide_duration linear);
+
+  &.open {
+    margin-top: 0;
+  }
+
+  .title {
+    font-size: $xlg-txt;
+    padding: 50px 0 10px;
+    color: $btn;
+  }
+
+  p {
+    font-size: $lrg-txt;
+  }
+}
+
+#header_wrapper {
+  & > div {
+    @include opacity(0);
+    @include transition(opacity $fade_duration $easing);
+  }
+
+  &.open > div {
+    @include opacity($default_opacity);
+  }
+}
+
+$header_height: 36px;
+$header_padding: 5px;
+#img_header {
+  position: absolute;
+  top: $header_padding;
+  left: $header_padding;
+  width: $main_img_width - $header_padding * 2;
+  height: $header_height;
+  z-index: $btn_zidx;
+
+  .search {
+    float: left;
+    position: relative;
+
+    $top_padding: 7px;
+
+    input {
+      $left_padding: 35px;
+      $right_padding: 20px;
+
+      font-size: $med-txt;
+      width: $left_padding + $right_padding + 200px;
+      padding: $top_padding $right_padding $top_padding $left_padding;
+      position: absolute;
+    }
+
+    // Stolen from website
+    .icon {
+      height: 100%;
+      display: block;
+      position: absolute;
+      margin: 20px 0 0 10px;
+
+      &:before,
+      &:after {
+        position: absolute;
+        content: "";
+        margin: -$top_padding 0 0;
+        top: 50%;
+      }
+
+      &:before {
+        width:6px;
+        height:6px;
+        border:3px solid $btn;
+        background:transparent;
+
+        /* css3 */
+        -webkit-border-radius:12px;
+        -moz-border-radius:12px;
+        border-radius:12px;
+      }
+
+      &:after {
+        left:10px;
+        width:3px;
+        height:7px;
+        margin-top:0;
+        background-color: $btn;
+        /* css3 */
+        -webkit-transform:rotate(-45deg);
+        -moz-transform:rotate(-45deg);
+        -ms-transform:rotate(-45deg);
+            -o-transform:rotate(-45deg);
+                transform:rotate(-45deg);
+      }
+    }
+
+    .close { // Unused for now
+      background-color: $gray;
+      padding: 0 5px 1px;
+      position: absolute;
+
+      @include rounded(12px);
+
+      &:hover {
+        background-color: $from-btn-secondary;
+      }
+    }
+  }
+}
+
+#applied_filters {
+  position: absolute;
+  top: $header_padding + $header_height;
+  left: 0;
+  z-index: $btn_zidx;
+  text-align: left;
+
+  & > div {
+    display: inline-block;
+    background-color: white;
+    padding: 5px;
+    margin: 5px 0 0 5px;
+
+    @include btn();
+
+    .close {
+      background-color: $gray;
+      padding: 0 5px 1px;
+
+      @include rounded(12px);
+    }
+
+    &:hover {
+      .close {
+        background-color: $from-btn-secondary;
+      }
+    }
+  }
+}
+
+#front_main {
+  overflow: hidden;
+  width: $main_img_width;
+  height: $main_img_height;
+  position: relative;
+  z-index: $front_main_idx;
+}
+
+#behind_main {
+  z-index: $behind_main_idx;
+}
+
+#main_img,
+#backup_img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: $main_img_width;
+  height: $main_img_height;
+}
+
+#main_img {
+  margin-left: 0;
+  z-index: $main_img_zidx;
+
+  @include transition(margin-left $slide_duration linear);
+
+  &.with_person {
+    margin-left: 200px;
+  }
+}
+
+#quote {
+  position: absolute;
+  z-index: $bio_zidx;
+  right: 10px;
+  top: 10px;
+  width: 200px;
+  padding: 5px;
+  background-color: $wht;
+
+  @include opacity($default_opacity);
+}
+
+#bio {
+  $bio_width: 340px;
+
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: $main_img_height;
+  z-index: 5;
+  background-color: $wht;
+  margin-left: -$bio_width;
+
+  @include transition(margin-left $slide_duration linear);
+
+  &.open {
+    margin-left: 0;
+    @include opacity($default_opacity);
+  }
+
+  // For person's full name
+  h2 {
+    font-size: $xlg-txt;
+    font-weight: normal;
+    padding-top: 5px;
+  }
+
+  // For person's job title
+  h4 {
+    font-weight: normal;
+  }
+
+  h3 {
+    margin: 10px 0 0;
+    font-size: $def-txt;
+    color: $drk;
+  }
+
+  .eng {
+    padding-top: 10px;
+  }
+
+  .num_countries {
+    font-size: $med-txt;
+    font-weight: normal;
+    color: $btn;
+
+    @include btn();
+
+    &:hover {
+      color: $btn_hvr;
+    }
+  }
+}
+
+#countries_img_wrapper {
+  height: 250px;
+}
+
+#languages {
+  h3 {
+    margin: 0;
+  }
+
+  li {
+    margin-top: 5px;
+    width: 25%;
+    display: inline-block;
+  }
+}
+
+$filters_padding: 4px;
+$filters_width: ($site_width - $main_img_width) / 2 - $filters_padding;
+
+#filters {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-right: 0;
+  width: $filters_width;
+
+  @include transition(margin-right $slide_duration linear);
+
+  &.open {
+    //margin-left: $main_img_width - $filters_width;
+    margin-right: -$filters_width - $filters_padding;
+  }
+
+  & > div {
+    @include blue_btn();
+    border-bottom: 3px $wht solid;
+    padding: 9px 15px;
+    font-size: $med_txt;
+    text-align: left;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &.applied {
+      background-color: $bookstyle;
+
+      &:hover {
+        background-color: $bookstyle-hvr;
+      }
+    }
+  }
+}
+
+$meet_text_height: 50px;
+$meet_text_padding: 10px;
+
+#meet_table {
+  position: absolute;
+  top: 190px;
+  left: 0px;
+  z-index: $btn_zidx;
+
+  td {
+    padding: 10px;
+    height: $meet_text_height;
+    width: ($main_img_width) / 3;
+  }
+
+  $meet_text_border: 3px;
+  $inner_arrow: 10px;
+  $outer_arrow: $inner_arrow + $meet_text_border * 2;
+
+  .meet_text {
+    padding: $meet_text_padding;
+    border: $meet_text_border $wht solid;
+
+    @include opacity($default_opacity);
+    @include blue_btn();
+
+    &:hover {
+      & + .arrow .inner_arrow {
+        @include arrow($inner_arrow, $inner_arrow, $btn_hvr, right);
+      }
+    }
+  }
+
+  .arrow {
+    margin-left: -($meet_text_border + 4px); // Why 4px??
+
+    & > span {
+      position: absolute;
+    }
+  }
+
+  .inner_arrow {
+    z-index: $meet_text_zidx + 2;
+    margin-top: $meet_text_border;
+    @include arrow($inner_arrow, $inner_arrow, $btn, right);
+  }
+
+  .outer_arrow {
+    z-index: $meet_text_zidx + 1;
+    @include arrow($outer_arrow, $outer_arrow, $wht, right);
+  }
+}
+
+#detailed_info {
+  $detailed_info_top_margin: 300px;
+  $detailed_info_padding: 10px;
+
+  display: inline-block;
+  width: $main_img_width - $detailed_info_padding * 2;
+  margin-top: -$detailed_info_top_margin;
+  padding: $detailed_info_padding;
+  line-height: 20px;
+
+  @include transition(margin-top $slide_duration linear);
+
+  &.open {
+    margin-top: 0;
+  }
+}
+
+/*
+.button.clicked {
+  background: gray;
+}
+.rotate_ccw {
+  @include transform(270, null);
+}
+.x_flip {
+  @include transform(0, 'x');
+}
+.rotate_ccw_x_flip {
+  @include transform(270, 'x');
+}
+
+h1 {
+  font-size: 18px;
+  padding-top: 20px;
+}
+h2 {
+  font-size: 19px;
+  font-weight: normal;
+}
+h3 {
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
+}
+#main_table td {
+  vertical-align: top;
+}
+#people_list div {
+  float: left;
+  text-align: left;
+  width: 120px;
+  padding-top: 5px;
+}
+
+#left_col > div {
+  position: relative;
+}
+
+$arrow_scale: .5;
+$arrow_len: 143px * $arrow_scale;
+
+#gamepad {
+  position: absolute;
+  top: $main_img_height - $arrow_len * 2 - 10px;
+  left: ($main_img_width - $arrow_len * 3) / 2;
+}
+#gamepad td {
+  height: $arrow_len;
+  width: $arrow_len;
+}
+.arrow span {
+  z-index: 2;
+  display: block;
+  height: $arrow_len;
+  width: $arrow_len;
+  line-height: $arrow_len;
+  background-image: url(/images/team/arrows_sprite.png);
+  background-size: (1066px * $arrow_scale) (1208px * $arrow_scale);
+}
+.turn {
+  background-position: (-749px * $arrow_scale) (-744px * $arrow_scale);
+}
+.uturn {
+  background-position: (-749px * $arrow_scale) (-888px * $arrow_scale);
+}
+.straight {
+  background-position: (-606px * $arrow_scale) (-306px * $arrow_scale);
+}
+
+
+#languages ul {
+  list-style: none;
+}
+*/

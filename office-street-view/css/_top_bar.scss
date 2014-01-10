@@ -1,0 +1,128 @@
+#top_bar {
+  //@include shadow($common_shadow);
+
+  width: $main_img_width + 80px;
+  display: inline-block;
+
+  .title {
+    font-size: $jmbo-txt;
+    padding: 0 0 10px;
+  }
+
+  $arrow_width: 20px;
+  $arrow_height: 30px;
+
+  .arrow_wrapper {
+    display: inline-block;
+    width: $arrow_width;
+  }
+
+  .arrow {
+    @include btn();
+
+    display: inline-block;
+    margin-top: -100px;
+    vertical-align: top;
+
+    &.back {
+      @include arrow($arrow_width, $arrow_height, $from-btn-secondary, left);
+      &:hover {
+        @include arrow($arrow_width, $arrow_height, $to-btn-secondary, left);
+      }
+    }
+
+    &.fwd {
+      @include arrow($arrow_width, $arrow_height, $from-btn-secondary, right);
+      &:hover {
+        @include arrow($arrow_width, $arrow_height, $to-btn-secondary, right);
+      }
+    }
+  }
+}
+
+#portraits {
+  $portrait_img_height: $portrait_img_width / 3 * 4;
+  $portrait_total_height: $portrait_img_height + 10px;
+  $arrow_height: 20px;
+
+  width: $main_img_width + 7px;
+  height: $portrait_total_height + 2 * $portrait_padding + $arrow_height;
+  // Extra height is for person's name
+
+  white-space: nowrap;
+  display: inline-block;
+  overflow: hidden;
+  position: relative;
+
+  & > div {
+    position: relative;
+  }
+
+  .people_wrapper {
+    @include transition(margin-left $slide_duration ease-in-out);
+  }
+
+  .person_wrapper {
+    position: absolute;
+    top: 0;
+
+    @include transition(all $slide_duration ease-in-out);
+    @include opacity(1);
+
+    &.fade_out {
+      @include opacity(0);
+    }
+  }
+
+  .person {
+    padding: $portrait_padding $portrait_padding 8px;
+    border: $default-border;
+    position: relative;
+    height: $portrait_total_height;
+    margin-right: -1px;
+    display: inline-block;
+
+    @include wht_btn();
+
+    img {
+      width: $portrait_img_width;
+      height: $portrait_img_height;
+    }
+
+    &.active {
+      @include blue_btn();
+
+      .arrow {
+        position: absolute;
+        margin: 0;
+        top: $portrait_total_height + 2 * $portrait_padding;
+        left: $portrait_img_width / 2 - $portrait_padding + 2px;
+        @include arrow(20px, 10px, $btn, down);
+      }
+
+      &:hover {
+        .arrow {
+          @include arrow(20px, 10px, $btn_hvr, down);
+        }
+      }
+    }
+
+    // I don't know why I need this
+    &.last_active {
+      margin-right: -5px;
+    }
+
+    // For the animation aspect
+    //@include transition(all $fade_duration ease-in-out);
+    @include transition(left $fade_duration ease-in-out);
+    //@include transition(margin-left $fade_duration $easing);
+    @include opacity(1);
+  }
+
+  .no_results {
+    position: absolute;
+    width: 100%;
+    margin-top: $portrait_img_height / 2 + 5px;
+    font-size: $lrg-txt;
+  }
+}

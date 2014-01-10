@@ -1,0 +1,15 @@
+// This is for the main section, separating a front layer and a back layer
+$front_main_idx: 1;
+$behind_main_idx: $front_main_idx - 1;
+
+// This stuff is for the front_main section, things are relative to the img
+$main_img_zidx: 1;
+
+// Everything is relative to the main img
+$btn_zidx: $main_img_zidx + 1;
+
+$meet_text_zidx: $main_img_zidx + 1;
+
+$bio_zidx: $main_img_zidx + 5; // This should be at least a few above meet text
+
+$splash_zidx: $main_img_zidx + 10;

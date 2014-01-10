@@ -1,0 +1,27 @@
+{
+  "name": "office-street-view",
+  "version": "0.0.0",
+  "homepage": "TODO",
+  "authors": [
+    "Holman Gao <holman@golmansax.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "Twig": "fabpot/Twig",
+
+    "my-sass-core": "golmansax/my-sass-core",
+
+    "requirejs": "latest",
+    "requirejs-domready": "latest",
+    "angular": "latest",
+    "angular-mocks": "latest",
+    "angular-bindonce": "latest"
+  }
+}
