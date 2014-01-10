@@ -1,0 +1,144 @@
+@import 'webscss/team/core';
+@import 'webscss/team/animate';
+@import 'webscss/team/zindex';
+
+$teams_font: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, sans-serif;
+
+@mixin btn($color: null, $hover: null, $text: null, $hover_text: null) {
+  cursor: hand;
+  cursor: pointer;
+
+  @if $color != null {
+    background-color: $color;
+  }
+  @if $text != null {
+    color: $text;
+  }
+
+  @if $hover != null or $hover_text != null {
+    &:hover {
+      @if $hover != null {
+        background-color: $hover;
+      }
+      @if $hover_text != null {
+        color: $hover_text;
+      }
+    }
+  }
+}
+
+@mixin wht_btn() {
+  @include btn($wht, $to-subtle, $btn, $btn-hvr);
+}
+
+@mixin blue_btn() {
+  @include btn($btn, $btn-hvr, $wht, null);
+}
+
+@mixin orange_btn() {
+  @include btn($bookstyle, $bookstyle-hvr, $wht, null);
+}
+
+@mixin arrow($width, $height, $color, $dir: left) {
+  width: 0;
+  height: 0;
+
+  @if $dir == left or $dir == right {
+    border-top: ($height / 2) solid transparent;
+    border-bottom: ($height / 2) solid transparent;
+
+    @if $dir == right {
+      border-left: $width solid $color;
+    }
+    @else if $dir == left {
+      border-right: $width solid $color;
+    }
+  }
+  @if $dir == up or $dir == down {
+    border-left: ($width / 2) solid transparent;
+    border-right: ($width / 2) solid transparent;
+
+    @if $dir == up {
+      border-bottom: $height solid $color;
+    }
+    @else if $dir == down {
+      border-top: $height solid $color;
+    }
+  }
+}
+
+$site_width: 960px;
+
+#site_wrapper {
+  padding-top: 20px;
+  width: $site_width;
+  text-align: center;
+
+  * {
+    font-family: $teams_font;
+  }
+}
+
+.btn {
+  @include blue_btn();
+
+  position: absolute;
+  padding: 8px 15px;
+  font-size: $med-txt;
+  z-index: $btn_zidx;
+
+  &.top {
+    top: 0;
+  }
+
+  &.right {
+    right: 0;
+    padding: 8px 0 8px 15px;
+
+    &.fwd_arrow {
+      &:after {
+        content: "\232A";
+        padding-left: 10px;
+      }
+    }
+
+    &.back_arrow {
+      &:after {
+        content: "\2329";
+        padding-right: 10px;
+      }
+    }
+  }
+
+  &.left {
+    left: 0;
+    padding: 8px 15px 8px 0;
+
+    &.back_arrow {
+      &:before {
+        content: "\2329";
+        padding-right: 10px;
+      }
+    }
+  }
+}
+
+$common_shadow: 0 0 7px #666;
+$slide_duration: .5s;
+$flip_duration: 1s;
+
+.flipInY, .flipOutY {
+  @include add_vendors(animation-duration, $flip_duration, (webkit, moz, o, ''));
+}
+
+$main_img_width: 600px;
+$main_img_height: $main_img_width / 3 * 2;
+
+// Image width and padding should add up to a multiple of the main img width
+$portrait_img_width: 90px;
+$portrait_padding: 5px;
+
+$default_opacity: .9;
+
+@import 'webscss/team/top_bar';
+@import 'webscss/team/main_section';

@@ -1,0 +1,10 @@
+// Basic Sass skeleton
+@import 'my-sass-core/skeletons/basic';
+
+li {
+  display: inline-block;
+}
+
+tbody tr {
+  border-top: $border-default;
+}

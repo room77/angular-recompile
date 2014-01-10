@@ -1,0 +1,44 @@
+@import 'common/sprites';
+
+// Include all web sprites
+.serp_graphics, .zoom_in, .zoom_out, .view_toggles .list, .view_toggles .map {
+  background-image: url(/images/web/sprites/serp_graphics.png);
+  background-repeat: no-repeat;
+}
+
+.site_logos {
+  background-image: url(/images/web/sprites/site_logos.png);
+  background-repeat: no-repeat;
+  display: inline-block;
+  width: 100px;
+  height: 41px;
+  background-position: -84px -7px; //default expedia
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+only screen and (min--moz-device-pixel-ratio: 1.5),
+only screen and (min-resolution: 240dpi) {
+  .serp_graphics {
+    background-image: url(/images/web/sprites/serp_graphics@2x.png);
+    background-size: 44px;
+  }
+  .ta_sprite {
+    background: url(/images/web/sprites/tripadvisor_sprite.png) no-repeat;
+    background-size: 73px;
+  }
+  .site_logos {
+    background-image: url(/images/web/sprites/site_logos@2x.png);
+    background-size: 800px;
+  }
+}
+
+.sgfx {
+  background: url(/images/web/angular/star_ratings.png) no-repeat;
+}
+
+/* REPLACE with just small logo */
+.gfx_controls {
+  background: url(/images/web/angular/search_control_bar.png) no-repeat;
+  background-size: 104px;
+  background-position: center;
+}

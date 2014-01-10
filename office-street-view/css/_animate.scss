@@ -1,0 +1,17 @@
+$fade_duration: .5s;
+$easing: cubic-bezier(0.250, 0.250, 0.750, 0.750);
+
+.fade-enter,
+.fade-leave {
+  @include transition(opacity $fade_duration $easing);
+}
+
+.fade-leave.fade-leave-active,
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter.fade-enter-active,
+.fade-leave {
+  opacity: 1;
+}

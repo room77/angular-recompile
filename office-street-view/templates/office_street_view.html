@@ -1,0 +1,186 @@
+<div id="site_wrapper" class="site_container page_content clear"
+    ng-controller="OfficeStreetViewCtrl">
+
+  {# We wrap this in a div to get this div to have a width of 100% and to
+      restrict the inner div width with css #}
+  <div>
+    <div id="top_bar">
+      <div class="title">
+        Meet the Team
+      </div>
+      <div>
+        <div class="arrow_wrapper">
+          <div class="back arrow" ng-click="PortraitsBack()"
+              ng-show="ShowPortraitsBack()"></div>
+        </div>
+        <div id="portraits">
+          <div ng-style="{ 'margin-left': portraits_margin + 'px' }"
+              class="people_wrapper">
+            <div class="person_wrapper"
+                ng-style="{ left: $index * portrait_width + 'px' }"
+                ng-animate="{ enter: 'flipInY', leave: 'fade_out' }"
+                ng-repeat="person in FilterPeopleAndPrioritizeMeet() track by person.key">
+              <div class="person" ng-class="{ active: person.in_view }"
+                  bindonce ng-click="Meet(person)">
+                <img bo-src="person.img">
+                <div bo-text="person.short_name"></div>
+                <div class="arrow" ng-show="person.in_view"></div>
+              </div>
+            </div>
+          </div>
+          <div ng-hide="FilterPeopleAndPrioritizeMeet().length > 0"
+              class="no_results"
+              ng-animate="{ show: 'fade-enter', hide: 'fade-leave' }">
+            No one matches your filter selections &#9785;.
+          </div>
+        </div>
+        <div class="arrow_wrapper">
+          <div class="fwd arrow" ng-click="PortraitsFwd()"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div id="main_section">
+      <div id="front_main" r77-recompile-when="bio">
+        <div id="splash_screen" ng-class="{ open: splash_open }"
+            ng-click="CloseSplash()">
+          <div class="title">See what it's like to work at Room 77!</div>
+          <p>
+            Meet our talented group of employees.
+          </p>
+          <p>
+            Click on a photo or use the arrow keys to move through the
+            office.
+          </p>
+        </div>
+
+        <img id="main_img" ng-src="[[ main_img ]]" ng-init="Init()"
+            ng-class="{ with_person: bio }">
+
+        <img id="backup_img" bindonce="backup_img" bo-src="backup_img">
+
+        <div id="header_wrapper" ng-class="{ open: !(bio || splash_open) }">
+          <div id="img_header">
+            <div class="search">
+              <input ng-model="qu.ery" placeholder="Search for a person"
+                  r77-focus="CloseFilters()">
+              <div class="icon"></div>
+              {#<div class="close">x</div>#}
+            </div>
+            <div class="btn top right" ng-click="ToggleFiltersOpen()"
+                ng-class="{ fwd_arrow: !filters_open, back_arrow: filters_open}">
+              Filter
+            </div>
+          </div>
+
+          <div id="applied_filters">
+            <div ng-repeat="filter in applied_filters" bindonce
+                ng-animate="'fade'" ng-click="HaltFilter($index)">
+              <div>
+                <span bo-text="filter.name"></span>
+                <span class="close">x</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="quote" ng-show="bio.quote">
+          &ldquo;<span r77-recompile>
+            <span bindonce bo-text="bio.quote"></span>
+          </span>&rdquo;
+        </div>
+
+        <div id="bio" r77-recompile ng-class="{ open: bio }">
+          <div bindonce="bio">
+            <div class="btn top left back_arrow"
+                ng-click="Back()">Back</div>
+
+            <h2 bo-text="bio.name"></h2>
+            <h4 bo-text="bio.role"></h4>
+
+            <div bo-show="bio.eng.lang" class="eng">
+              <strong>Favorite coding setup:</strong>
+              <span bo-text="bio.eng.lang"></span>
+              in
+              <span bo-text="bio.eng.editor"></span>
+            </div>
+
+            <div bo-show="bio.countries_url">
+              <h3>
+                <span>Countries visited:</span>
+                <span class="num_countries"
+                    bo-text="bio.countries.length"></span>
+              </h3>
+              <div id="countries_img_wrapper">
+                <img bo-src="bio.countries_url" alt="Countries visited">
+              </div>
+            </div>
+
+            <div id="languages" r77-render-if="bio.languages">
+              <h3>Languages Spoken:</h3>
+              <ul>
+                <li ng-repeat="lang in bio.languages" bindonce
+                    bo-text="lang|lang_display_name"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <table id="meet_table">
+        {% for row in 0..2 %}
+          <tr>
+          {% for col in 0..2 %}
+            {% if col == 0 %}
+              <td style="text-align: left;">
+            {% elseif col == 1 %}
+              <td style="text-align: center;">
+            {% else %}
+              <td style="text-align: right;">
+            {% endif %}
+              {% set name = dir_name[row][col] %}
+              {% if row != 1 or col != 1 %}
+              <span ng-switch="!!meet.{{ name }} && FitsFilter(meet.{{ name }})"
+                  ng-animate="'fade'">
+                <span ng-switch-when="true">
+                  <span r77-recompile-when="meet.{{ name }}"
+                      r77-recompile>
+                    <span bindonce>
+                      <span class="meet_text" ng-click="Meet(meet.{{ name }})"
+                          bo-text="meet.{{ name }}.short_name"></span>
+                      <span class="arrow">
+                        <span class="inner_arrow"></span>
+                        <span class="outer_arrow"></span>
+                      </span>
+                    </span>
+                  </span>
+                </span>
+              </span>
+              {% endif %}
+            </td>
+          {% endfor %}
+          </tr>
+        {% endfor %}
+        </table>
+      </div>
+
+      {# Things that start behind the main_section and slide out #}
+      <div id="behind_main">
+        <div id="filters" ng-class="{ open: filters_open }"
+            r77-recompile-once-when="filters" r77-recompile>
+          <div r77-const-repeat="filter in filters" bindonce
+              ng-class="{ applied: filter.applied }"
+              bo-text="filter.name" ng-click="ToggleFilter(filter)">
+          </div>
+        </div>
+
+      </div>
+    </div> {# End main section #}
+
+    <div id="detailed_info" ng-class="{ open: bio.detailed_info }"
+        r77-recompile-when="bio.detailed_info" r77-recompile>
+      <span bindonce bo-text="bio.detailed_info"></span>
+    </div>
+  </div>
+</div>

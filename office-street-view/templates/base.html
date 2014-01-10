@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    {% for css_file in CSS_FILES %}
+      <link rel="stylesheet" href="{{ css_file }}">
+    {% endfor %}
+    <title>{{ TITLE }}</title>
+  </head>
+  <body>
+    {% block body %}{% endblock %}
+
+    {% if JS_VARS_FROM_SERVER_JSON %}
+      {% autoescape false %}
+      <script type="text/javascript">
+        window.JS_VARS_FROM_SERVER = {{ JS_VARS_FROM_SERVER_JSON }};
+      </script>
+      {% endautoescape %}
+    {% endif %}
+
+    {% for js_file in JS_FILES %}
+      <script src="{{ js_file }}"></script>
+    {% endfor %}
+  </body>
+</html>
