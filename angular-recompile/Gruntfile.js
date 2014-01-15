@@ -17,12 +17,9 @@
     grunt.registerTask('default', []);
 
     // Dev tasks
-    grunt.registerTask('build', [
-      'lint', 'concat'
-    ]);
+    grunt.registerTask('build', ['lint', 'concat']);
     grunt.registerTask('lint', ['jshint']);
-    // TODO
-    //grunt.registerTask('test', ['lint', 'build:dev', 'jasmine']);
+    grunt.registerTask('test', ['build', 'jasmine']);
   };
 
   return;

@@ -17,15 +17,14 @@ angular.module('room77.' + MY_NAMESPACE, []);
   'use strict';
 
   angular.module('room77.' + MY_NAMESPACE).controller('RecompileCtrl', [
-    '$scope', '$timeout', RecompileCtrl
+    '$scope', RecompileCtrlConstructor
   ]);
 
   return;
 
-  function RecompileCtrl($scope, $timeout) {
+  function RecompileCtrlConstructor($scope) {
     var RecompileCtrl = {},
-        _recompile_fns = [],
-        _watches = [];
+        _recompile_fns = [];
 
     RecompileCtrl.RegisterFn = function(fn) {
       _recompile_fns.push(fn);
@@ -35,44 +34,15 @@ angular.module('room77.' + MY_NAMESPACE, []);
       for (var i = 0; i < _recompile_fns.length; i++) _recompile_fns[i]();
     };
 
-    RecompileCtrl.AddWatcher = function(handle) {
-      _watches.push(handle);
-      return handle;
-    };
-
-    RecompileCtrl.RemoveWatch = function(handle) {
-      if (!handle) return;
-
-      var i;
-      for (i = 0; i < _watches.length; i++) {
-        if (handle === _watches[i]) break;
-      }
-
-      if (i < _watches.length) {
-        handle();
-        _watches.splice(i, 1);
-      }
-    };
-
-    RecompileCtrl.RemoveAllWatchers = function() {
-      $timeout(function() {
-        for (var i = 0; i < _watches.length; i++) {
-          if (_watches[i]) _watches[i]();
-        }
-        _watches = [];
-      });
-    };
-
     $scope.$on('$destroy', function() {
       _recompile_fns = [];
-      _watches = [];
     });
 
     return RecompileCtrl;
   }
 })(); // End recompile controllers.
 
-function() {
+(function() {
   'use strict';
 
   // TODO: abstract out a main link function
@@ -88,54 +58,64 @@ function() {
    *   i.e. camelCase for directives and dash-separated for HTML attribute
    */
   var recompile_triggers = [
-    { name: 'watch',
+    { name: 'watch'
     },
     { name: 'deep_watch',
       deep_check: true
     },
     { name: 'when',
       only_on_true: true
-    }
-    { name: 'watch_collection'
+    },
+    { name: 'watch_collection',
       watch_array: true
     },
     { name: 'once_when',
       only_on_true: true,
+      once: true
     }
   ];
 
-    var module = angular.module('room77.' + MY_NAMESPACE);
+  var module = angular.module('room77.' + MY_NAMESPACE),
 
-  var i;
-  for (i = 0; i < recompile_triggers.length; i++) {
-    var recompile_trigger = recompile_triggers[i];
+  // We use this CSS selector to grab the closest recompile element
+  //   (It will be created by iterating through the triggers.)
+      recompile_triggers_css_selector = '',
+
+  // This is an array of the directives, used by the recompile-html directive
+  //   to obtain the controllers of the recompile triggers
+      recompile_triggers_require_array = [];
+
+  angular.forEach(recompile_triggers, function(recompile_trigger) {
     var directive_name = _DirectiveName(recompile_trigger.name);
 
-    // Register directive
+    // Requires are both optional and can be on the parent
+    recompile_triggers_require_array.push('?^' + directive_name);
+
+    // Add a comma if it's not the first trigger (it is the first trigger if
+    //   the generated selector is empty)
+    recompile_triggers_css_selector += '[' +
+        _CssSelectorName(recompile_trigger.name) + ']' +
+        (recompile_triggers_css_selector ? ', ' : '');
+
+    // Register trigger directive
     module.directive(directive_name, function() {
       return {
         controller: 'RecompileCtrl',
         scope: true,
-        link: function(scope, elt, attrs, RecompileCtrl) {
-          var watch_fn;
-
-          // Choose between normal watch, or array watch
-          if (recompile_trigger.watch_array) watch_fn = scope.$watchCollection;
-          else watch_fn = scope.$watch;
-
-          var watch_remover = RecompileCtrl.AddWatcher(watch_fn(attrs[directive_name], function(new_val) {
-            if (recompile_trigger.only_when_true && new_val) {
-              RecompileCtrl.RunFns();
-              if (_ShouldRemove(scope, attrs, new_val)) {
-                RecompileCtrl.RemoveWatch(watch_remover);
-                watch_remover = null;
-              }
-            }
-          }, recompile_trigger.deep_check));
-        }
+        link: _RecompileTriggerLinkFn(recompile_trigger)
       };
     });
-  }
+  });
+
+  // Register the directive that recompiles the html
+  module.directive(_DirectiveName('html'), function() {
+    return {
+      restrict: 'EA',
+      require: recompile_triggers_require_array,
+      transclude: true,
+      compile: _RecompileHtmlCompileFn(recompile_triggers_css_selector)
+    };
+  });
 
   return;
 
@@ -149,211 +129,98 @@ function() {
     return MY_NAMESPACE + name;
   }
 
+  /* Switches the name to use dashes instead of underscores and puts the
+   *   desired namespace in front of the name
+   */
+  function _CssSelectorName(name) {
+    // TODO
+    return MY_NAMESPACE + name;
+  }
 
   // TODO add comments
   function _ShouldRemove(scope, attrs, watch_val) {
     var directive_name = _DirectiveName('stop_on');
 
     if (attrs[directive_name]) {
-      var is_stop = watch_val === scope.$eval(attrs.r77RecompileStopOn);
+      var is_stop = watch_val === scope.$eval(attrs[directive_name]);
       return !attrs.r77RecompileStopOnWhen ? is_stop :
           is_stop === scope.$eval(attrs.r77RecompileStopOnWhen);
     }
     return false;
   }
-/*
-  // Any one of these r77Recompile directives can place a watch, and at every watch
-  //  we recompile the scopes set by r77Recompile
-  var r77_recompile_directives = {
-    r77RecompileWatch: 'r77-recompile-watch',
-    r77RecompileDeepWatch: 'r77-recompile-deep-watch',
-    r77RecompileWatchCollection: 'r77-recompile-watch-collection',
-    r77RecompileWhen: 'r77-recompile-when',
-    r77RecompileOnceWhen: 'r77-recompile-once-when',
-    r77RecompileOn: 'r77-recompile-on'
+
+  function _RecompileTriggerLinkFn(recompile_trigger) {
+    return function(scope, elt, attrs, RecompileCtrl) {
+      var directive_name = _DirectiveName(recompile_trigger.name),
+          watch_fn;
+
+      // Choose between normal watch, or array watch
+      if (recompile_trigger.watch_array) watch_fn = scope.$watchCollection;
+      else watch_fn = scope.$watch;
+
+      var watch_remover = watch_fn(attrs[directive_name], function(new_val) {
+        // We trigger the recompile fns if no 'true' condition specified
+        //   or if the val is actually true
+        if (!recompile_trigger.only_when_true || new_val) {
+          RecompileCtrl.RunFns();
+          if (recompile_trigger.once || _ShouldRemove(scope, attrs, new_val)) {
+            watch_remover();
+            watch_remover = null;
+          }
+        }
+      }, recompile_trigger.deep_check);
+
+      scope.$on('$destroy', function() {
+        watch_remover = null;
+      });
+    };
   }
 
-  // We use this to grab the r77 recompile controllers
-  var r77_recompile_requires = [];
+  function _RecompileHtmlCompileFn() {
+    return function(cElt, cAttrs, transclude) {
+      return function(scope, elt, attrs, Ctrls) {
+        var RecompileCtrl = null,
+            child_scope = null;
 
-  // We use this to grab the closest recompile element, and use the appropriate
-  //  selector
-  var r77_recompile_selector = '';
+        var closest = elt.closest(recompile_triggers_css_selector);
+        angular.foreach(recompile_triggers, function(recompile_trigger, i) {
+          var css_selector_name = _CssSelectorName(recompile_trigger.name);
+          if (closest.is('[' + css_selector_name + ']')) {
+            RecompileCtrl = Ctrls[i];
+            return false;
+          }
+        });
 
-  var i = 0, n_directives = 0;
-  for (var directive in r77_recompile_directives) {
-    n_directives++;
+        if (!RecompileCtrl) return;
+
+        if (attrs.r77RecompileUntil) {
+          scope.$watch(scope, attrs.r77RecompileUntil, function(new_val) {
+            if (new_val) ;// TODO remove this fn from RecompileCtrl
+          });
+        }
+
+        // Initialize the elt
+        _TranscludeElt();
+        RecompileCtrl.RegisterFn(_TranscludeElt);
+
+        scope.$on('$destroy', function() {
+          RecompileCtrl = null;
+          child_scope = null;
+        });
+
+        return;
+
+        function _TranscludeElt() {
+          if (child_scope) child_scope.$destroy();
+          child_scope = scope.$new();
+
+          transclude(child_scope, function(clone) {
+            elt.empty().append(clone);
+          });
+        }
+      }; // End link array.
+    }; // End compile definition.
   }
-  for (var directive in r77_recompile_directives) {
-    r77_recompile_requires.push('?^' + directive);
-
-    var translated = r77_recompile_directives[directive];
-    r77_recompile_selector += '[' + translated + ']'
-        + (i < n_directives - 1 ? ', ' : '');
-    i++;
-  }
-
-  .directive('r77RecompileWatch', ['r77_util', function(r77_util) {
-    return {
-      controller: 'RecompileCtrl',
-      scope: true,
-      link: function(scope, elt, attrs, RecompileCtrl) {
-        var watch_remover = RecompileCtrl.AddWatcher(r77_util.watch(
-            scope,
-            attrs.r77RecompileWatch,
-            function(newval, oldval) {
-              RecompileCtrl.RunFns();
-              if (_ShouldRemove(scope, attrs, newval)) {
-                RecompileCtrl.RemoveWatch(watch_remover);
-                watch_remover = null;
-              }
-            }));
-      }
-    }
-  }])
-  .directive('r77RecompileDeepWatch', ['r77_util', function(r77_util) {
-    return {
-      controller: 'RecompileCtrl',
-      scope: true,
-      link: function(scope, elt, attrs, RecompileCtrl) {
-        var watch_remover = RecompileCtrl.AddWatcher(r77_util.watch(
-            scope,
-            attrs.r77RecompileDeepWatch,
-            function(newval, oldval) {
-              RecompileCtrl.RunFns();
-              if (_ShouldRemove(scope, attrs, newval)) {
-                RecompileCtrl.RemoveWatch(watch_remover);
-                watch_remover = null;
-              }
-            }, true));
-      }
-    }
-  }])
-  .directive('r77RecompileWatchCollection', ['r77_util', function(r77_util) {
-    return {
-      controller: 'RecompileCtrl',
-      scope: true,
-      link: function(scope, elt, attrs, RecompileCtrl) {
-        var watch_remover = RecompileCtrl.AddWatcher(r77_util.watchCollection(
-            scope,
-            attrs.r77RecompileWatchCollection,
-            function(newval, oldval) {
-              RecompileCtrl.RunFns();
-              if (_ShouldRemove(scope, attrs, newval)) {
-                RecompileCtrl.RemoveWatch(watch_remover);
-                watch_remover = null;
-              }
-            }));
-      }
-    }
-  }])
-  .directive('r77RecompileWhen', ['r77_util', function(r77_util) {
-    return {
-      controller: 'RecompileCtrl',
-      scope: true,
-      link: function(scope, elt, attrs, RecompileCtrl) {
-        var watch_remover = RecompileCtrl.AddWatcher(r77_util.watch(
-            scope,
-            attrs.r77RecompileWhen,
-            function(newval, oldval) {
-              if (newval) RecompileCtrl.RunFns();
-              if (_ShouldRemove(scope, attrs, newval)) {
-                RecompileCtrl.RemoveWatch(watch_remover);
-                watch_remover = null;
-              }
-            }));
-      }
-    }
-  }])
-  .directive('r77RecompileOnceWhen', ['r77_util', function(r77_util) {
-    return {
-      controller: 'RecompileCtrl',
-      scope: true,
-      link: function(scope, elt, attrs, RecompileCtrl) {
-        var watch_remover = RecompileCtrl.AddWatcher(r77_util.watch(
-            scope,
-            attrs.r77RecompileOnceWhen,
-            function(newval, oldval) {
-              if (newval) {
-                RecompileCtrl.RunFns();
-                RecompileCtrl.RemoveWatch(watch_remover);
-                watch_remover = null;
-              }
-            }));
-      }
-    }
-  }])
-  .directive('r77RecompileOn', ['r77_util', function(r77_util) {
-    return {
-      controller: 'RecompileCtrl',
-      scope: true,
-      link: function(scope, elt, attrs, RecompileCtrl) {
-        var watch_remover = RecompileCtrl.AddWatcher(r77_util.watch(
-            scope,
-            attrs.r77RecompileOn,
-            function() {
-              RecompileCtrl.RunFns();
-              if (_ShouldRemove(scope, attrs, newval)) {
-                RecompileCtrl.RemoveWatch(watch_remover);
-                watch_remover = null;
-              }
-            }));
-      }
-    }
-  }])
-  */
-
-  module.directive('r77Recompile', ['$compile', function($compile) {
-    return {
-      restrict: 'EA',
-      require: r77_recompile_requires,
-      transclude: true,
-      compile: function(cElt, cAttrs, transclude) {
-        var cached_html = cElt.html();
-
-        return function(scope, elt, attrs, Ctrls) {
-          var RecompileCtrl = null,
-              child_scope = null;
-
-          var closest = elt.closest(r77_recompile_selector),
-              i = 0;
-
-          for (var directive in r77_recompile_directives) {
-            var translated = r77_recompile_directives[directive];
-            if (closest.is('[' + translated + ']')) {
-              RecompileCtrl = Ctrls[i];
-              break;
-            }
-            i++;
-          }
-
-          if (!RecompileCtrl) return;
-
-          if (attrs.r77RecompileUntil) {
-            RecompileCtrl.AddWatcher($scope.$watch(scope, attrs.r77RecompileUntil,
-            function(val) {
-              if (val) RecompileCtrl.RemoveAllWatchers();
-            }));
-          }
-
-          // Initialize the elt
-          _TranscludeElt();
-          RecompileCtrl.RegisterFn(_TranscludeElt);
-
-          return;
-
-          function _TranscludeElt() {
-            if (child_scope) child_scope.$destroy();
-            child_scope = scope.$new();
-
-            transclude(child_scope, function(clone) {
-              elt.empty().append(clone);
-            });
-          }
-        } // end link array
-      } // end compile definition
-    }
-  }]);
 })();
 
 })(); // End initial closure.

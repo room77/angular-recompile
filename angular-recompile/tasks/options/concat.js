@@ -7,7 +7,7 @@
         'src/namespace.js', 'src/module.js', 'src/controllers.js',
         'src/directives.js'
       ],
-      dest: 'dist/recompile.js',
+      dest: 'dist/recompile.js'
     },
 
     options: {
@@ -18,8 +18,8 @@
       // Remove JSHint comments
       process: function(source_code) {
         return source_code
-            .replace(/\/\* jshint -W\d* \*\/\n/, '')
-            .replace(/\/\* global [A-Z_]* \*\/\n/, '');
+            .replace(/[ ]*\/\* jshint -W\d* \*\/\n/g, '')
+            .replace(/[ ]*\/\* global [A-Z_]* \*\/\n/g, '');
       },
 
       nonull: true

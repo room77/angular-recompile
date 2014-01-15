@@ -3,15 +3,14 @@
 
   /* global MY_NAMESPACE */
   angular.module('room77.' + MY_NAMESPACE).controller('RecompileCtrl', [
-    '$scope', '$timeout', RecompileCtrlConstructor
+    '$scope', RecompileCtrlConstructor
   ]);
 
   return;
 
-  function RecompileCtrlConstructor($scope, $timeout) {
+  function RecompileCtrlConstructor($scope) {
     var RecompileCtrl = {},
-        _recompile_fns = [],
-        _watches = [];
+        _recompile_fns = [];
 
     RecompileCtrl.RegisterFn = function(fn) {
       _recompile_fns.push(fn);
@@ -21,37 +20,8 @@
       for (var i = 0; i < _recompile_fns.length; i++) _recompile_fns[i]();
     };
 
-    RecompileCtrl.AddWatcher = function(handle) {
-      _watches.push(handle);
-      return handle;
-    };
-
-    RecompileCtrl.RemoveWatch = function(handle) {
-      if (!handle) return;
-
-      var i;
-      for (i = 0; i < _watches.length; i++) {
-        if (handle === _watches[i]) break;
-      }
-
-      if (i < _watches.length) {
-        handle();
-        _watches.splice(i, 1);
-      }
-    };
-
-    RecompileCtrl.RemoveAllWatchers = function() {
-      $timeout(function() {
-        for (var i = 0; i < _watches.length; i++) {
-          if (_watches[i]) _watches[i]();
-        }
-        _watches = [];
-      });
-    };
-
     $scope.$on('$destroy', function() {
       _recompile_fns = [];
-      _watches = [];
     });
 
     return RecompileCtrl;

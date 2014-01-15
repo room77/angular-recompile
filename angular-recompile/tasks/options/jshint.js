@@ -8,6 +8,7 @@
     },
 
     src: ['src/**/*.js'],
-    grunt: ['Gruntfile.js', 'tasks/**/*.js']
+    grunt: ['Gruntfile.js', 'tasks/**/*.js'],
+    test: ['test/**/*.js']
   };
 })();

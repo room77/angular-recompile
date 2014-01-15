@@ -1,0 +1,21 @@
+{
+  "name": "angular-recompile",
+  "version": "0.0.0",
+  "homepage": "TODO",
+  "authors": [
+    "Holman Gao <holman@golmansax.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "latest",
+    "angular-bindonce": "latest",
+    "angular-mocks": "latest"
+  }
+}
