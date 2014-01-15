@@ -1,13 +1,14 @@
 (function() {
   'use strict';
 
+  /* global MY_NAMESPACE */
   angular.module('room77.' + MY_NAMESPACE).controller('RecompileCtrl', [
-    '$scope', '$timeout', RecompileCtrl
+    '$scope', '$timeout', RecompileCtrlConstructor
   ]);
 
   return;
 
-  function RecompileCtrl($scope, $timeout) {
+  function RecompileCtrlConstructor($scope, $timeout) {
     var RecompileCtrl = {},
         _recompile_fns = [],
         _watches = [];

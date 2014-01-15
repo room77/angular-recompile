@@ -1,4 +1,4 @@
-function() {
+(function() {
   'use strict';
 
   // TODO: abstract out a main link function
@@ -14,19 +14,19 @@ function() {
    *   i.e. camelCase for directives and dash-separated for HTML attribute
    */
   var recompile_triggers = [
-    { name: 'watch',
+    { name: 'watch'
     },
     { name: 'deep_watch',
       deep_check: true
     },
     { name: 'when',
       only_on_true: true
-    }
-    { name: 'watch_collection'
+    },
+    { name: 'watch_collection',
       watch_array: true
     },
     { name: 'once_when',
-      only_on_true: true,
+      only_on_true: true
     }
   ];
 

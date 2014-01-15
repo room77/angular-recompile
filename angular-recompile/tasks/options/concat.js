@@ -15,6 +15,13 @@
       banner: '(function() {\n\'use strict\';\n\n',
       footer: '\n})(); // End initial closure.',
 
+      // Remove JSHint comments
+      process: function(source_code) {
+        return source_code
+            .replace(/\/\* jshint -W\d* \*\/\n/, '')
+            .replace(/\/\* global [A-Z_]* \*\/\n/, '');
+      },
+
       nonull: true
     }
   };
