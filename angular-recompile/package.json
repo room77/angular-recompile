@@ -1,0 +1,17 @@
+{
+  "name": "angular-recompile",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "TODO"
+  },
+  "devDependencies": {
+    "glob": "latest",
+    "grunt": "latest",
+    "grunt-contrib-concat": "latest",
+    "grunt-contrib-jasmine": "latest",
+    "grunt-contrib-jshint": "latest",
+    "load-grunt-tasks": "latest",
+    "lodash": "latest"
+  }
+}
