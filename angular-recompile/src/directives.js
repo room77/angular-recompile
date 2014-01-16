@@ -7,8 +7,13 @@
    *
    * Object: {
    *   name: (in lowercase, separated by underscores) e.g. 'watch_collection'
-   *   link: Angular directive link function
-   * }
+   *
+   *   (The following are all properties, if set to true, they cause certain
+   *      behavior in the watch that is created)
+   *   deep_check: Object deep comparison in watch
+   *   only_on_true: only fires if watch value is Javascript true
+   *   watch_array: Array comparision in watch (see $watchCollection)
+   *   once: watch removes itself after firing once
    *
    * NOTE: the name will automatically be translated into the right syntaxes
    *   i.e. camelCase for directives and dash-separated for HTML attribute
@@ -34,10 +39,6 @@
   /* global MY_NAMESPACE */
   var module = angular.module('room77.' + MY_NAMESPACE),
 
-  // We use this CSS selector to grab the closest recompile element
-  //   (It will be created by iterating through the triggers.)
-      recompile_triggers_css_selector = '',
-
   // This is an array of the directives, used by the recompile-html directive
   //   to obtain the controllers of the recompile triggers
       recompile_triggers_require_array = [];
@@ -47,12 +48,6 @@
 
     // Requires are both optional and can be on the parent
     recompile_triggers_require_array.push('?^' + directive_name);
-
-    // Add a comma if it's not the first trigger (it is the first trigger if
-    //   the generated selector is empty)
-    recompile_triggers_css_selector += '[' +
-        _CssSelectorName(recompile_trigger.name) + ']' +
-        (recompile_triggers_css_selector ? ', ' : '');
 
     // Register trigger directive
     module.directive(directive_name, function() {
@@ -70,7 +65,7 @@
       restrict: 'EA',
       require: recompile_triggers_require_array,
       transclude: true,
-      compile: _RecompileHtmlCompileFn(recompile_triggers_css_selector)
+      link: _RecompileHtmlLinkFn()
     };
   });
 
@@ -82,16 +77,19 @@
    *   the name
    */
   function _DirectiveName(name) {
-    // TODO
-    return MY_NAMESPACE + name;
+    return MY_NAMESPACE + name.replace(/(_|^)(\w)/g, _Capitalize);
+
+    function _Capitalize(match, prefix, letter) {
+      return letter.toUpperCase();
+    }
   }
 
   /* Switches the name to use dashes instead of underscores and puts the
    *   desired namespace in front of the name
    */
-  function _CssSelectorName(name) {
+  function _HtmlName(name) {
     // TODO
-    return MY_NAMESPACE + name;
+    return MY_NAMESPACE + '-' + name.replace('_', '-');
   }
 
   // TODO add comments
@@ -116,7 +114,17 @@
       else watch_fn = scope.$watch;
 
       /* jshint -W074 */
-      var watch_remover = watch_fn(attrs[directive_name], function(new_val) {
+      var watch_remover = watch_fn.call(
+        scope, attrs[directive_name], _WatchFn, recompile_trigger.deep_check
+      );
+
+      scope.$on('$destroy', function() {
+        watch_remover = null;
+      });
+
+      return;
+
+      function _WatchFn(new_val) {
         // We trigger the recompile fns if no 'true' condition specified
         //   or if the val is actually true
         if (!recompile_trigger.only_when_true || new_val) {
@@ -126,57 +134,56 @@
             watch_remover = null;
           }
         }
-      }, recompile_trigger.deep_check);
-
-      scope.$on('$destroy', function() {
-        watch_remover = null;
-      });
+      }
     };
   }
 
-  function _RecompileHtmlCompileFn() {
-    return function(cElt, cAttrs, transclude) {
-      return function(scope, elt, attrs, Ctrls) {
-        var RecompileCtrl = null,
-            child_scope = null;
+  function _RecompileHtmlLinkFn() {
+    return function(scope, elt, attrs, Ctrls, transclude_fn) {
+      var RecompileCtrl = null,
+          child_scope = null;
 
-        var closest = elt.closest(recompile_triggers_css_selector);
-        angular.foreach(recompile_triggers, function(recompile_trigger, i) {
-          var css_selector_name = _CssSelectorName(recompile_trigger.name);
-          if (closest.is('[' + css_selector_name + ']')) {
+      var current_elt = elt;
+      while(current_elt.length > 0) {
+        // Let's look on elt for the right attributes
+        /* jshint -W083 */
+        angular.forEach(recompile_triggers, function(recompile_trigger, i) {
+          var html_name = _HtmlName(recompile_trigger.name);
+          if (typeof current_elt.attr(html_name) !== 'undefined') {
             RecompileCtrl = Ctrls[i];
             return false;
           }
         });
 
-        if (!RecompileCtrl) return;
+        if (RecompileCtrl) break;
+        current_elt = current_elt.parent();
+      }
 
-        if (attrs.r77RecompileUntil) {
-          scope.$watch(scope, attrs.r77RecompileUntil, function(new_val) {
-            if (new_val) ;// TODO remove this fn from RecompileCtrl
-          });
-        }
-
-        // Initialize the elt
-        _TranscludeElt();
-        RecompileCtrl.RegisterFn(_TranscludeElt);
-
-        scope.$on('$destroy', function() {
-          RecompileCtrl = null;
-          child_scope = null;
+      if (attrs.r77RecompileUntil) {
+        scope.$watch(scope, attrs.r77RecompileUntil, function(new_val) {
+          if (new_val) ;// TODO remove this fn from RecompileCtrl
         });
+      }
 
-        return;
+      // Initialize the elt
+      _TranscludeElt();
+      RecompileCtrl.RegisterFn(_TranscludeElt);
 
-        function _TranscludeElt() {
-          if (child_scope) child_scope.$destroy();
-          child_scope = scope.$new();
+      scope.$on('$destroy', function() {
+        RecompileCtrl = null;
+        child_scope = null;
+      });
 
-          transclude(child_scope, function(clone) {
-            elt.empty().append(clone);
-          });
-        }
-      }; // End link array.
-    }; // End compile definition.
+      return;
+
+      function _TranscludeElt() {
+        if (child_scope) child_scope.$destroy();
+        child_scope = scope.$new();
+
+        transclude_fn(child_scope, function(clone) {
+          elt.empty().append(clone);
+        });
+      }
+    }; // End link array.
   }
 })();
