@@ -6,7 +6,10 @@ define(['./util'], function(util) {
     '</div>';
 
   return {
-    /* Can take any number of parameters, i.e. Nested(name1, name2, name3, ...)
+    /*  NOTE: for any of these functions, the directive parameter can be a
+     *    string or an Object (see documentation below for _DirectiveHtml)
+     *
+     *  Can take any number of parameters, i.e. Nested(name1, name2, name3, ...)
      *   and generates a nested tree with directive name1 at the outermost:
      *
      * <div recompile-name1="watch">
@@ -21,10 +24,10 @@ define(['./util'], function(util) {
           html = BASIC_RECOMPILE_HTML;
 
       for (var i = args.length - 1; i >= 0; i--) {
-        var name = args[i];
-        if (!name) continue;
+        var directive = args[i];
+        if (!directive) continue;
 
-        html = '<div ' + util.DirectiveName(name) + '="watch">' + html +
+        html = '<div ' + _DirectiveHtml(directive) + '>' + html +
           '</div>';
       }
 
@@ -35,10 +38,33 @@ define(['./util'], function(util) {
      *   <span bindonce bo-text="val"></span>
      * </div>
      */
-    OnSameElt: function(name1, name2) {
-      return '<div ' + util.DirectiveName(name1) + '="watch" ' +
-        util.DirectiveName(name2) + '="watch">' +
+    OnSameElt: function(directive1, directive2) {
+      return '<div ' + _DirectiveHtml(directive1) + ' ' +
+        _DirectiveHtml(directive2) + '>' +
         BASIC_RECOMPILE_HTML + '</div>';
     }
   };
+
+  /* @param directive can be:
+   *  - string: name
+   *  - Object: { name, attr: for the directive in html }
+   *      e.g. directive="attr"
+   *
+   * If type string is used, then attr is 'watch'
+   */
+  function _DirectiveHtml(directive) {
+    var name, attr;
+
+    if (typeof directive === 'string') {
+      name = directive;
+      attr = 'watch';
+    }
+    else if (typeof directive === 'object') {
+      name = directive.name;
+      attr = directive.attr;
+    }
+    else throw 'directive should be string or Object';
+
+    return util.DirectiveName(name) + '="' + attr + '"';
+  }
 });
