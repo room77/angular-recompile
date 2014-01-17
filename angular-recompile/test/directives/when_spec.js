@@ -3,21 +3,21 @@ define([
 ], function(VALS, html_template, SpecConstruct) {
   'use strict';
 
-  var my_name = 'watch';
+  var my_name = 'when';
 
   SpecConstruct(my_name, [{
-    desc: 'Changes vals if watch changes',
-    test: _WatchAndValChange
+    desc: 'Changes vals if watch changes to true',
+    test: _WatchChangesToTrue
   }, {
-    desc: 'Doesn\'t change val if watch doesn\'t change',
-    test: _NoWatchChange
+    desc: 'Doesn\'t change val if watch changes to false',
+    test: _WatchChangesToFalse
   }]);
 
   return;
 
   /*** Private fns below ***/
 
-  function _WatchAndValChange($compile, $scope) {
+  function _WatchChangesToTrue($compile, $scope) {
     $scope.watch = 'Hello';
     $scope.val = VALS[0];
 
@@ -35,7 +35,7 @@ define([
     expect(elt.find('span').html()).toBe(VALS[1]);
   }
 
-  function _NoWatchChange($compile, $scope) {
+  function _WatchChangesToFalse($compile, $scope) {
     $scope.watch = 'Hello';
     $scope.val = VALS[0];
 
@@ -46,7 +46,8 @@ define([
     // Expect initial val to be correct
     expect(elt.find('span').html()).toBe(VALS[0]);
 
-    // Change val and still should be old value
+    // Change watch to false and change val, html still should be old value
+    $scope.watch = false;
     $scope.val = VALS[1];
     $scope.$digest();
     expect(elt.find('span').html()).toBe(VALS[0]);

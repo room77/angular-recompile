@@ -1,11 +1,10 @@
-(function() {
+define(['my_namespace', 'mocks'], function(MY_NAMESPACE) {
   'use strict';
 
   var ctrl_name = 'RecompileCtrl';
   describe(ctrl_name, function() {
     var $scope, RecompileCtrl;
 
-    /* global MY_NAMESPACE */
     beforeEach(module('room77.' + MY_NAMESPACE));
 
     beforeEach(inject(function($controller, $rootScope) {
@@ -35,4 +34,4 @@
       expect(method1).not.toHaveBeenCalled();
     });
   });
-})();
+});

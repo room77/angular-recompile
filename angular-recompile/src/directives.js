@@ -1,8 +1,6 @@
 (function() {
   'use strict';
 
-  // TODO: abstract out a main link function
-
   /* An array of directives that can trigger a recompile
    *
    * Object: {
@@ -11,7 +9,7 @@
    *   (The following are all properties, if set to true, they cause certain
    *      behavior in the watch that is created)
    *   deep_check: Object deep comparison in watch
-   *   only_on_true: only fires if watch value is Javascript true
+   *   only_when_true: only fires if watch value is Javascript true
    *   watch_array: Array comparision in watch (see $watchCollection)
    *   once: watch removes itself after firing once
    *
@@ -25,13 +23,13 @@
       deep_check: true
     },
     { name: 'when',
-      only_on_true: true
+      only_when_true: true
     },
     { name: 'watch_collection',
       watch_array: true
     },
     { name: 'once_when',
-      only_on_true: true,
+      only_when_true: true,
       once: true
     }
   ];
@@ -93,7 +91,10 @@
   }
 
   // TODO add comments
-  function _ShouldRemove(scope, attrs, watch_val) {
+  function _ShouldRemove() {//scope, attrs, watch_val) {
+    // TODO
+    return false;
+    /*
     var directive_name = _DirectiveName('stop_on');
 
     if (attrs[directive_name]) {
@@ -102,6 +103,7 @@
           is_stop === scope.$eval(attrs.r77RecompileStopOnWhen);
     }
     return false;
+    */
   }
 
   function _RecompileTriggerLinkFn(recompile_trigger) {
@@ -139,6 +141,7 @@
   }
 
   function _RecompileHtmlLinkFn() {
+    /* jshint -W074 */
     return function(scope, elt, attrs, Ctrls, transclude_fn) {
       var RecompileCtrl = null,
           child_scope = null;
@@ -149,15 +152,23 @@
         /* jshint -W083 */
         angular.forEach(recompile_triggers, function(recompile_trigger, i) {
           var html_name = _HtmlName(recompile_trigger.name);
+
           if (typeof current_elt.attr(html_name) !== 'undefined') {
+            // We keep this loop going to make sure that two recompile
+            //   triggers are not on the same elt
+            if (RecompileCtrl) {
+              throw Error('Two recompile triggers on the same elt');
+            }
+
             RecompileCtrl = Ctrls[i];
-            return false;
           }
         });
 
         if (RecompileCtrl) break;
         current_elt = current_elt.parent();
       }
+
+      if (!RecompileCtrl) throw Error('Cannot find recompile trigger');
 
       if (attrs.r77RecompileUntil) {
         scope.$watch(scope, attrs.r77RecompileUntil, function(new_val) {

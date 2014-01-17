@@ -8,14 +8,16 @@
       keepRunner: true,
 
       specs: ['test/**/*_spec.js'],
+
+      // Source needs Angular, otherwise include things through requirejs
       vendor: [
-        'bower_components/angular/angular.js',
-        'bower_components/angular-bindonce/bindonce.js',
-        'bower_components/angular-mocks/angular-mocks.js'
+        'bower_components/angular/angular.js'
       ],
 
-      // Let's load the namespace name so the tests can use it
-      helpers: ['src/namespace.js']
+      template: require('grunt-template-jasmine-requirejs'),
+      templateOptions: {
+        requireConfigFile: 'test/test_main.js'
+      }
     }
   };
 })();

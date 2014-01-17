@@ -10,7 +10,7 @@
   "immed": true,
   "indent": 2,
   "latedef": "nofunc",
-  "newcap": true,
+  "newcap": false, // We use uppercase names for normal functions as well
   "noarg": true,
   "noempty": true,
   "nonew": true,
@@ -80,6 +80,9 @@
     // Used by Gruntfiles
     "module": true,
     "require": true,
+
+    // Used by RequireJS
+    "define": true,
 
     // Used by Jasmine
     "beforeEach": true,
