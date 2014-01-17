@@ -3,17 +3,19 @@ define([
 ], function(html_template, scenarios, SpecConstruct) {
   'use strict';
 
-  var my_name = 'watch';
+  var my_name = 'watch_collection';
 
   SpecConstruct(my_name, [{
-    desc: 'Recompiles if watch changes',
+    desc: 'Recompiles if data inside watch array changes',
     test: scenarios.ExpectARecompile(html_template.Nested(my_name), [
-      'Hello', 'Goodbye'
+      ['Hello', 'World'],
+      ['Goodbye', 'World']
     ])
   }, {
-    desc: 'Doesn\'t recompile if watch doesn\'t change',
+    desc: 'Doesn\'t recompile if data inside watch array doesn\'t change',
     test: scenarios.DontExpectARecompile(html_template.Nested(my_name), [
-      'Hello', 'Hello'
+      ['Hello', 'World'],
+      ['Hello', 'World']
     ])
   }]);
 });

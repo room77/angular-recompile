@@ -2,7 +2,7 @@ define(['./util'], function(util) {
   'use strict';
 
   var BASIC_RECOMPILE_HTML = '<div recompile-html>' +
-    '  <span bindonce bo-text="val"></span>' +
+    '  <div ng-init="Init()"></div>' +
     '</div>';
 
   return {
@@ -20,7 +20,7 @@ define(['./util'], function(util) {
       var args = Array.prototype.slice.call(arguments),
           html = BASIC_RECOMPILE_HTML;
 
-      for (var i = 0; i < args.length; i++) {
+      for (var i = args.length - 1; i >= 0; i--) {
         var name = args[i];
         if (!name) continue;
 

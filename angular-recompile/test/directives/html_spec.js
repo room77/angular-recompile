@@ -1,41 +1,20 @@
 define([
-  './util/arbitrary_vals', './util/html_template', './util/spec_construct'
-], function(VALS, html_template, SpecConstruct) {
+  './util/html_template', './util/scenarios', './util/spec_construct'
+], function(html_template, scenarios, SpecConstruct) {
   'use strict';
 
   var my_name = 'html';
 
   SpecConstruct(my_name, [{
     desc: 'Throws error if no parent recompile trigger',
-    test: _NoRecompileTrigger
+    test: scenarios.ExpectException(html_template.Nested())
   }, {
     desc: 'Throws error if two recompile triggers on same elt',
-    test: _RecompileTriggersOnSameElt
+    test: scenarios.ExpectException(html_template.OnSameElt('watch', 'when'))
+  }, {
+    desc: 'Takes on the behavior of the closest recompile trigger',
+    test: scenarios.ExpectARecompile(html_template.Nested('when', 'watch'), [
+      'Hello', ''
+    ])
   }]);
-
-  // TODO Nested recompiles
-
-  return;
-
-  /*** Private fns below ***/
-
-  function _NoRecompileTrigger($compile, $scope) {
-    // Generate the directive
-    var MakeHtml = function() {
-      $compile(html_template.Nested())($scope);
-      $scope.$digest();
-    };
-
-    expect(MakeHtml).toThrow();
-  }
-
-  function _RecompileTriggersOnSameElt($compile, $scope) {
-    // Generate the directive
-    var MakeHtml = function() {
-      $compile(html_template.OnSameElt('watch', 'when'))($scope);
-      $scope.$digest();
-    };
-
-    expect(MakeHtml).toThrow();
-  }
 });
