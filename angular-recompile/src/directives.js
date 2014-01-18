@@ -42,13 +42,13 @@
       recompile_triggers_require_array = [];
 
   angular.forEach(recompile_triggers, function(recompile_trigger) {
-    var directive_name = _DirectiveName(recompile_trigger.name);
+    var angular_name = _AngularName(recompile_trigger.name);
 
     // Requires are both optional and can be on the parent
-    recompile_triggers_require_array.push('?^' + directive_name);
+    recompile_triggers_require_array.push('?^' + angular_name);
 
     // Register trigger directive
-    module.directive(directive_name, function() {
+    module.directive(angular_name, function() {
       return {
         controller: 'RecompileCtrl',
         scope: true,
@@ -58,7 +58,7 @@
   });
 
   // Register the directive that recompiles the html
-  module.directive(_DirectiveName('html'), function() {
+  module.directive(_AngularName('html'), function() {
     return {
       restrict: 'EA',
       require: recompile_triggers_require_array,
@@ -68,14 +68,14 @@
   });
 
   // recompile-until has to be paired with a recompile-html
-  module.directive(_DirectiveName('until'), function() {
+  module.directive(_AngularName('until'), function() {
     return {
-      require: _DirectiveName('html')
+      require: _AngularName('html')
     };
   });
 
   // recompile-stop-watch-if has to be paired with a recompile trigger
-  module.directive(_DirectiveName('stop_watch_if'), function() {
+  module.directive(_AngularName('stop_watch_if'), function() {
     return {
       require: recompile_triggers_require_array.map(function(directive) {
         // Only look for directives on this element
@@ -105,10 +105,10 @@
   /* Switches the name to camelCase and puts the desired namespace in front of
    *   the name
    */
-  function _DirectiveName(name) {
-    return MY_NAMESPACE + name.replace(/(_|^)(\w)/g, _Capitalize);
+  function _AngularName(name) {
+    return (MY_NAMESPACE + '_' + name).replace(/_(\w)/g, _Capitalize);
 
-    function _Capitalize(match, prefix, letter) {
+    function _Capitalize(match, letter) {
       return letter.toUpperCase();
     }
   }
@@ -118,13 +118,13 @@
    */
   function _HtmlName(name) {
     // TODO
-    return MY_NAMESPACE + '-' + name.replace('_', '-');
+    return (MY_NAMESPACE + '_' + name).replace(/_/g, '-');
   }
 
   // TODO add comments
   function _RecompileTriggerLinkFn(recompile_trigger) {
     return function(scope, elt, attrs, RecompileCtrl) {
-      var directive_name = _DirectiveName(recompile_trigger.name),
+      var angular_name = _AngularName(recompile_trigger.name),
           watch_fn;
 
       // Choose between normal watch, or array watch
@@ -133,7 +133,7 @@
 
       /* jshint -W074 */
       var watch_remover = watch_fn.call(
-        scope, attrs[directive_name], _WatchFn, recompile_trigger.deep_check
+        scope, attrs[angular_name], _WatchFn, recompile_trigger.deep_check
       );
 
       scope.$on('$destroy', function() {
@@ -158,10 +158,10 @@
   }
 
   function _RemoveTriggerWatch(scope, attrs, watch_val) {
-    var directive_name = _DirectiveName('stop_watch_if');
+    var angular_name = _AngularName('stop_watch_if');
 
-    if (attrs[directive_name]) {
-      return watch_val === scope.$eval(attrs[directive_name]);
+    if (attrs[angular_name]) {
+      return watch_val === scope.$eval(attrs[angular_name]);
     }
 
     return false;
@@ -197,9 +197,9 @@
 
       if (!RecompileCtrl) throw Error('Cannot find recompile trigger');
 
-      var until_directive_name = _DirectiveName('until');
-      if (attrs[until_directive_name]) {
-        var until_watch_remover = scope.$watch(attrs[until_directive_name],
+      var until_angular_name = _AngularName('until');
+      if (attrs[until_angular_name]) {
+        var until_watch_remover = scope.$watch(attrs[until_angular_name],
           function UntilWatch(new_val) {
             if (new_val) {
               RecompileCtrl.RemoveFn(_TranscludeElt);

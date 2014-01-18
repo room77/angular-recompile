@@ -1,6 +1,7 @@
 define([
-  './util/html_template', './util/scenarios', './util/spec_construct'
-], function(html_template, scenarios, SpecConstruct) {
+  './util/html_template', './util/scenarios', './util/spec_construct',
+  './util/util'
+], function(html_template, scenarios, SpecConstruct, util) {
   'use strict';
 
   var my_name = 'until';
@@ -41,8 +42,9 @@ define([
 
   function _UntilTest() {
     var html =
-      '<div recompile-watch="watch">' +
-      '  <div recompile-html recompile-until="until">' +
+      '<div ' + util.HtmlName('watch') + '="watch">' +
+      '  <div ' + util.HtmlName('html') + ' ' +
+            util.HtmlName('until') + '="until">' +
       '    <div ng-init="Init()"></div>' +
       '  </div>' +
       '</div>';
@@ -54,10 +56,11 @@ define([
 
   function _SiblingTest() {
     var html =
-      '<div recompile-watch="watch">' +
-      '  <div recompile-html recompile-until="until">' +
+      '<div ' + util.HtmlName('watch') + '="watch">' +
+      '  <div ' + util.HtmlName('html') + ' ' +
+           util.HtmlName('until') + '="until">' +
       '  </div>' +
-      '  <div recompile-html>' +
+      '  <div ' + util.HtmlName('html') + '>' +
       '    <div ng-init="Init()"></div>' +
       '  </div>' +
       '</div>';

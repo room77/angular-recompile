@@ -15,7 +15,7 @@ define([
   'use strict';
 
   return function SpecSkeleton(name, specs) {
-    describe(util.DirectiveName(name) + ' directive', function() {
+    describe(util.HtmlName(name) + ' directive', function() {
       var $compile, $scope;
 
       beforeEach(module('room77.' + MY_NAMESPACE));

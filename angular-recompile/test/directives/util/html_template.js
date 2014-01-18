@@ -1,7 +1,7 @@
 define(['./util'], function(util) {
   'use strict';
 
-  var BASIC_RECOMPILE_HTML = '<div recompile-html>' +
+  var BASIC_RECOMPILE_HTML = '<div ' + util.HtmlName('html') + '>' +
     '  <div ng-init="Init()"></div>' +
     '</div>';
 
@@ -30,6 +30,7 @@ define(['./util'], function(util) {
         html = '<div ' + _DirectiveHtml(directive) + '>' + html +
           '</div>';
       }
+      console.log(html);
 
       return html;
     },
@@ -48,7 +49,7 @@ define(['./util'], function(util) {
   /* @param directive can be:
    *  - string: name
    *  - Object: { name, attr: for the directive in html }
-   *      e.g. <div DirectiveName(name)="attr" ...>
+   *      e.g. <div HtmlName(name)="attr" ...>
    *
    * If type string is used, then attr is 'watch'
    */
@@ -65,6 +66,6 @@ define(['./util'], function(util) {
     }
     else throw 'directive should be string or Object';
 
-    return util.DirectiveName(name) + '="' + attr + '"';
+    return util.HtmlName(name) + '="' + attr + '"';
   }
 });
