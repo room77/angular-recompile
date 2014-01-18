@@ -57,7 +57,7 @@
   // Environments and exposing globals
   "browser": false,
   "couch": false,
-  "devel": true,
+  "devel": false,
   "dojo": false,
   "jquery": false,
   "mootools": false,

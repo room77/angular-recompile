@@ -30,7 +30,6 @@ define(['./util'], function(util) {
         html = '<div ' + _DirectiveHtml(directive) + '>' + html +
           '</div>';
       }
-      console.log(html);
 
       return html;
     },

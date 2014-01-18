@@ -9,7 +9,7 @@
  *   with underscores seperating words.  Anything different might screw up how
  *   directive naming works in directives.js and in the tests.
  */
-var MY_NAMESPACE = 'r77_recompile';
+var MY_NAMESPACE = 'recompile';
 
 angular.module('room77.' + MY_NAMESPACE, []);
 
