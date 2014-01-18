@@ -15,7 +15,6 @@
   ],
   "dependencies": {
     "angular": "latest",
-    "angular-bindonce": "latest",
     "angular-mocks": "latest"
   }
 }

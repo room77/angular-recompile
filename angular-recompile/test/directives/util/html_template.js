@@ -16,7 +16,7 @@ define(['./util'], function(util) {
      *   <div recompile-name2="watch">
      *     <div recompile-name3="watch">
      *       <div recompile-html>
-     *         <span bindonce bo-text="val"></span>  // This is always there
+     *         <div ng-init="Init()"></div>  // This is always there
      *   ...
      */
     Nested: function() {
@@ -35,7 +35,7 @@ define(['./util'], function(util) {
     },
 
     /* <div recompile-name1="watch" recompile-name2="watch">
-     *   <span bindonce bo-text="val"></span>
+     *   <div ng-init="Init()"></div>  // This is always there
      * </div>
      */
     OnSameElt: function(directive1, directive2) {

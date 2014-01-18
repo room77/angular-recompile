@@ -6,7 +6,6 @@ require.config({
     //   This is a dummy file, and it exports the already loaded Angular
     angular: 'test/angular',
 
-    bindonce: 'bower_components/angular-bindonce/bindonce',
     mocks: 'bower_components/angular-mocks/angular-mocks',
     my_namespace: 'src/namespace'
   },
@@ -14,9 +13,6 @@ require.config({
   shim: {
     angular: {
       exports: 'angular'
-    },
-    bindonce: {
-      deps: ['angular']
     },
     mocks: {
       deps: ['angular']

@@ -10,7 +10,7 @@
  */
 
 define([
-  'angular', 'my_namespace', './util', 'bindonce', 'mocks'
+  'angular', 'my_namespace', './util', 'mocks'
 ], function(angular, MY_NAMESPACE, util) {
   'use strict';
 
@@ -19,9 +19,6 @@ define([
       var $compile, $scope;
 
       beforeEach(module('room77.' + MY_NAMESPACE));
-
-      // Bindonce needed to test recompile
-      beforeEach(module('pasvaz.bindonce'));
 
       beforeEach(inject(function(_$compile_, $rootScope) {
         $compile = _$compile_;
