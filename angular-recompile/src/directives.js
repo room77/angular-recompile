@@ -67,6 +67,37 @@
     };
   });
 
+  // recompile-until has to be paired with a recompile-html
+  module.directive(_DirectiveName('until'), function() {
+    return {
+      require: _DirectiveName('html')
+    };
+  });
+
+  // recompile-stop-watch-if has to be paired with a recompile trigger
+  module.directive(_DirectiveName('stop_watch_if'), function() {
+    return {
+      require: recompile_triggers_require_array.map(function(directive) {
+        // Only look for directives on this element
+        return directive.replace('^', '');
+      }),
+      link: function(scope, elt, attrs, Ctrls) {
+        var ctrl_exists = false;
+        for (var i = 0; i < Ctrls.length; i++) {
+          if (Ctrls[i]) {
+            ctrl_exists = true;
+            break;
+          }
+        }
+
+        if (!ctrl_exists) {
+          throw 'recompile-stop-watch-if needs to be paired with a ' +
+            'recompile trigger';
+        }
+      }
+    };
+  });
+
   return;
 
   /*** Private fns below ***/
@@ -91,21 +122,6 @@
   }
 
   // TODO add comments
-  function _ShouldRemove() {//scope, attrs, watch_val) {
-    // TODO
-    return false;
-    /*
-    var directive_name = _DirectiveName('stop_on');
-
-    if (attrs[directive_name]) {
-      var is_stop = watch_val === scope.$eval(attrs[directive_name]);
-      return !attrs.r77RecompileStopOnWhen ? is_stop :
-          is_stop === scope.$eval(attrs.r77RecompileStopOnWhen);
-    }
-    return false;
-    */
-  }
-
   function _RecompileTriggerLinkFn(recompile_trigger) {
     return function(scope, elt, attrs, RecompileCtrl) {
       var directive_name = _DirectiveName(recompile_trigger.name),
@@ -131,13 +147,24 @@
         //   or if the val is actually true
         if (!recompile_trigger.only_when_true || new_val) {
           RecompileCtrl.RunFns();
-          if (recompile_trigger.once || _ShouldRemove(scope, attrs, new_val)) {
+          if (recompile_trigger.once ||
+              _RemoveTriggerWatch(scope, attrs, new_val)) {
             watch_remover();
             watch_remover = null;
           }
         }
       }
     };
+  }
+
+  function _RemoveTriggerWatch(scope, attrs, watch_val) {
+    var directive_name = _DirectiveName('stop_watch_if');
+
+    if (attrs[directive_name]) {
+      return watch_val === scope.$eval(attrs[directive_name]);
+    }
+
+    return false;
   }
 
   function _RecompileHtmlLinkFn() {
@@ -170,10 +197,16 @@
 
       if (!RecompileCtrl) throw Error('Cannot find recompile trigger');
 
-      if (attrs.r77RecompileUntil) {
-        scope.$watch(scope, attrs.r77RecompileUntil, function(new_val) {
-          if (new_val) ;// TODO remove this fn from RecompileCtrl
-        });
+      var until_directive_name = _DirectiveName('until');
+      if (attrs[until_directive_name]) {
+        var until_watch_remover = scope.$watch(attrs[until_directive_name],
+          function UntilWatch(new_val) {
+            if (new_val) {
+              RecompileCtrl.RemoveFn(_TranscludeElt);
+              until_watch_remover();
+            }
+          }
+        );
       }
 
       // Initialize the elt

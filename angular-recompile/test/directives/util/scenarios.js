@@ -17,6 +17,8 @@ define([], function() {
 
     ExpectNRecompiles: _ExpectNRecompiles,
 
+    ExpectNRecompilesMultipleWatches: _ExpectNRecompilesMultipleWatches,
+
     ExpectException: function(html) {
       return function($compile, $scope) {
         // Generate the directive
@@ -42,6 +44,22 @@ define([], function() {
   }
 
   function _ExpectNRecompiles(n_recompiles, html, watch_states) {
+    var watch_states_as_objects = [];
+    for (var i = 0; i < watch_states.length; i++) {
+      watch_states_as_objects.push({
+        attr: 'watch',
+        val: watch_states[i]
+      });
+    }
+
+    return _ExpectNRecompilesMultipleWatches(
+      n_recompiles, html, watch_states_as_objects
+    );
+  }
+
+  function _ExpectNRecompilesMultipleWatches(n_recompiles, html,
+      watch_states) {
+
     return function($compile, $scope) {
       $scope.Init = jasmine.createSpy('Inner recompile fn');
 
@@ -49,13 +67,16 @@ define([], function() {
       $compile(html)($scope);
 
       for (var i = 0; i < watch_states.length; i++) {
-        // Trigger watch change and a $digest
-        $scope.watch = watch_states[i];
+        var watch_state = watch_states[i],
+            attr = watch_state.attr,
+            val = watch_state.val;
+
+        $scope[attr] = val;
         $scope.$digest();
       }
 
-      // Init is always run on $compile, so let's add 1
-      expect($scope.Init.callCount).toBe(1 + n_recompiles);
+      // Init is always run on $compile, so let's subtract 1 from actual count
+      expect($scope.Init.callCount - 1).toBe(n_recompiles);
     };
   }
 });

@@ -48,7 +48,7 @@ define(['./util'], function(util) {
   /* @param directive can be:
    *  - string: name
    *  - Object: { name, attr: for the directive in html }
-   *      e.g. directive="attr"
+   *      e.g. <div DirectiveName(name)="attr" ...>
    *
    * If type string is used, then attr is 'watch'
    */
