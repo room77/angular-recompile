@@ -14,7 +14,7 @@
     require('load-grunt-tasks')(grunt);
 
     // Register custom tasks
-    grunt.registerTask('default', []);
+    grunt.registerTask('default', ['test']);
 
     // Dev tasks
     grunt.registerTask('build', ['lint', 'concat']);
