@@ -11,8 +11,9 @@
     },
 
     options: {
-      // Let's wrap our concat'd files in a closure
-      banner: '(function() {\n\'use strict\';\n\n',
+      // Let's wrap our concat'd files in a closure and also add a opening
+      //   comment
+      banner: _OpeningComment() + '\n\n(function() {\n\'use strict\';\n\n',
       footer: '\n})(); // End initial closure.',
 
       // Remove JSHint comments
@@ -25,4 +26,19 @@
       nonull: true
     }
   };
+
+  return;
+
+  function _OpeningComment() {
+    return [
+      '/*',
+      ' * Recompile library for AngularJS',
+      ' * version: TODO',
+      ' *',
+      ' * NOTE: It\'s best to not directly edit this file.  Do a git clone on',
+      ' *   this repo and edit the files in src/.  Then run \'grunt\' on the',
+      ' *   command line to rebuild dist/recompile.js',
+      ' */'
+    ].join('\n');
+  }
 })();

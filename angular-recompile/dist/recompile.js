@@ -1,3 +1,12 @@
+/*
+ * Recompile library for AngularJS
+ * version: TODO
+ *
+ * NOTE: It's best to not directly edit this file.  Do a git clone on
+ *   this repo and edit the files in src/.  Then run 'grunt' on the
+ *   command line to rebuild dist/recompile.js
+ */
+
 (function() {
 'use strict';
 
@@ -229,7 +238,7 @@ angular.module('room77.' + MY_NAMESPACE, []);
           child_scope = null;
 
       var current_elt = elt;
-      while(current_elt.length > 0) {
+      while (current_elt.length > 0) {
         // Let's look on elt for the right attributes
         angular.forEach(recompile_triggers, function(recompile_trigger, i) {
           var html_name = _HtmlName(recompile_trigger.name);
