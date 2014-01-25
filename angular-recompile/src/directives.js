@@ -174,7 +174,7 @@
           child_scope = null;
 
       var current_elt = elt;
-      while(current_elt.length > 0) {
+      while (current_elt.length > 0) {
         // Let's look on elt for the right attributes
         /* jshint -W083 */
         angular.forEach(recompile_triggers, function(recompile_trigger, i) {
