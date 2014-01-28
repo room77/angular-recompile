@@ -20,7 +20,7 @@
       for (var i = 0; i < _recompile_fns.length; i++) _recompile_fns[i]();
     };
 
-    RecompileCtrl.RemoveFn = function(fn) {
+    RecompileCtrl.DeregisterFn = function(fn) {
       var i;
       for (i = 0; i < _recompile_fns.length; i++) {
         if (angular.equals(fn, _recompile_fns[i])) break;

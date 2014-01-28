@@ -70,7 +70,11 @@
   // recompile-until has to be paired with a recompile-html
   module.directive(_AngularName('until'), function() {
     return {
-      require: _AngularName('html')
+      link: function(scope, elt, attrs) {
+        if (!attrs.hasOwnProperty(_AngularName('html'))) {
+          throw 'recompile-until needs to be paired with recompile-html';
+        }
+      }
     };
   });
 
@@ -171,6 +175,9 @@
     /* jshint -W074 */
     return function(scope, elt, attrs, Ctrls, transclude_fn) {
       var RecompileCtrl = null,
+
+      // We keep track if our transclude fn was deregistered
+          deregistered = false,
           child_scope = null;
 
       var current_elt = elt;
@@ -202,8 +209,9 @@
         var until_watch_remover = scope.$watch(attrs[until_angular_name],
           function UntilWatch(new_val) {
             if (new_val) {
-              RecompileCtrl.RemoveFn(_TranscludeElt);
+              _Deregister();
               until_watch_remover();
+              until_watch_remover = null;
             }
           }
         );
@@ -214,8 +222,7 @@
       RecompileCtrl.RegisterFn(_TranscludeElt);
 
       scope.$on('$destroy', function() {
-        RecompileCtrl = null;
-        child_scope = null;
+        _Deregister();
       });
 
       return;
@@ -227,6 +234,17 @@
         transclude_fn(child_scope, function(clone) {
           elt.empty().append(clone);
         });
+      }
+
+      function _Deregister() {
+        if (!deregistered) {
+          deregistered = true;
+
+          // Clean up variables
+          RecompileCtrl.DeregisterFn(_TranscludeElt);
+          RecompileCtrl = null;
+          child_scope = null;
+        }
       }
     }; // End link array.
   }

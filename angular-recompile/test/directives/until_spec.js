@@ -33,7 +33,10 @@ define([
     test: _SiblingTest()
   }, {
     desc: 'Throws error if not paired with a recompile-html',
-    test: scenarios.ExpectException(html_template.Nested('until'))
+    test: scenarios.ExpectException(html_template.Nested('watch', my_name))
+  }, {
+    desc: 'No error if until fires and later $scope is $destroyed',
+    test: _DestroyTest()
   }]);
 
   return;
@@ -67,5 +70,18 @@ define([
 
     // We expect the latter recompile-html to fire for all watch triggers
     return scenarios.ExpectNRecompilesMultipleWatches(4, html, WATCH_STATES);
+  }
+
+  function _DestroyTest() {
+    return function($compile, $scope) {
+      // Run the basic until test
+      _UntilTest().apply(this, arguments);
+
+      var until_and_destroy = function() {
+        $scope.$destroy();
+      };
+
+      expect(until_and_destroy).not.toThrow();
+    };
   }
 });

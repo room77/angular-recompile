@@ -43,7 +43,7 @@ angular.module('room77.' + MY_NAMESPACE, []);
       for (var i = 0; i < _recompile_fns.length; i++) _recompile_fns[i]();
     };
 
-    RecompileCtrl.RemoveFn = function(fn) {
+    RecompileCtrl.DeregisterFn = function(fn) {
       var i;
       for (i = 0; i < _recompile_fns.length; i++) {
         if (angular.equals(fn, _recompile_fns[i])) break;
@@ -136,7 +136,11 @@ angular.module('room77.' + MY_NAMESPACE, []);
   // recompile-until has to be paired with a recompile-html
   module.directive(_AngularName('until'), function() {
     return {
-      require: _AngularName('html')
+      link: function(scope, elt, attrs) {
+        if (!attrs.hasOwnProperty(_AngularName('html'))) {
+          throw 'recompile-until needs to be paired with recompile-html';
+        }
+      }
     };
   });
 
@@ -235,6 +239,9 @@ angular.module('room77.' + MY_NAMESPACE, []);
   function _RecompileHtmlLinkFn() {
     return function(scope, elt, attrs, Ctrls, transclude_fn) {
       var RecompileCtrl = null,
+
+      // We keep track if our transclude fn was deregistered
+          deregistered = false,
           child_scope = null;
 
       var current_elt = elt;
@@ -265,8 +272,9 @@ angular.module('room77.' + MY_NAMESPACE, []);
         var until_watch_remover = scope.$watch(attrs[until_angular_name],
           function UntilWatch(new_val) {
             if (new_val) {
-              RecompileCtrl.RemoveFn(_TranscludeElt);
+              _Deregister();
               until_watch_remover();
+              until_watch_remover = null;
             }
           }
         );
@@ -277,8 +285,7 @@ angular.module('room77.' + MY_NAMESPACE, []);
       RecompileCtrl.RegisterFn(_TranscludeElt);
 
       scope.$on('$destroy', function() {
-        RecompileCtrl = null;
-        child_scope = null;
+        _Deregister();
       });
 
       return;
@@ -290,6 +297,17 @@ angular.module('room77.' + MY_NAMESPACE, []);
         transclude_fn(child_scope, function(clone) {
           elt.empty().append(clone);
         });
+      }
+
+      function _Deregister() {
+        if (!deregistered) {
+          deregistered = true;
+
+          // Clean up variables
+          RecompileCtrl.DeregisterFn(_TranscludeElt);
+          RecompileCtrl = null;
+          child_scope = null;
+        }
       }
     }; // End link array.
   }

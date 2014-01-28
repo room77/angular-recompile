@@ -4,6 +4,8 @@
   module.exports = {
     src: ['dist/**/*.js'],
     options: {
+      outfile: '_SpecRunner.html',
+
       // Use this for debugging
       keepRunner: true,
 
@@ -14,9 +16,15 @@
         'bower_components/angular/angular.js'
       ],
 
-      template: require('grunt-template-jasmine-requirejs'),
+      template: require('grunt-template-jasmine-istanbul'),
       templateOptions: {
-        requireConfigFile: 'test/test_main.js'
+        coverage: 'coverage/coverage.json',
+        report: 'coverage',
+
+        template: require('grunt-template-jasmine-requirejs'),
+        templateOptions: {
+          requireConfigFile: 'test/test_main.js'
+        }
       }
     }
   };

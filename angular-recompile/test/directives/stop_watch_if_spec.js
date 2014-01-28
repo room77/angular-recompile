@@ -7,7 +7,7 @@ define([
 
   SpecConstruct(my_name, [{
     desc: 'Throws error if not paired with a recompile trigger',
-    test: scenarios.ExpectException(html_template.Nested(my_name))
+    test: scenarios.ExpectException(html_template.Nested('watch', my_name))
   }, {
     desc: 'No more recompiles once stop-watch-if matches watch',
     test: _StopWatchTest()

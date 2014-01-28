@@ -33,5 +33,24 @@ define(['my_namespace', 'mocks'], function(MY_NAMESPACE) {
 
       expect(method1).not.toHaveBeenCalled();
     });
+
+    it('Doesn\'t call a deregistered fn', function() {
+      var my_fn = jasmine.createSpy('method');
+
+      RecompileCtrl.RegisterFn(function() {});
+      RecompileCtrl.RegisterFn(my_fn);
+      RecompileCtrl.DeregisterFn(my_fn);
+      RecompileCtrl.RunFns();
+
+      expect(my_fn).not.toHaveBeenCalled();
+    });
+
+    it('Cannot deregister a non-registered fn', function() {
+      var remove_invalid_fn = function() {
+        RecompileCtrl.DeregisterFn(function() {});
+      };
+
+      expect(remove_invalid_fn).toThrow();
+    });
   });
 });
