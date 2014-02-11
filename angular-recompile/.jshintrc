@@ -74,7 +74,7 @@
     // For AngularJS
     "angular": true,
 
-    // Allow window (but not document and location and ...)
+    // Allow window (but not document, location, and other browser globals)
     "window": true,
 
     // Used by Gruntfiles

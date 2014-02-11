@@ -40,4 +40,4 @@
 
     return RecompileCtrl;
   }
-})(); // End recompile controllers.
+})(); // End recompile controller

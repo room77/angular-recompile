@@ -1,8 +1,8 @@
-/*
+/**
  * Recompile library for AngularJS
  * version: TODO
  *
- * NOTE: It's best to not directly edit this file.  Do a git clone on
+ * NOTE: It's best to not directly edit this file.  Checkout
  *   this repo and edit the files in src/.  Then run 'grunt' on the
  *   command line to rebuild dist/recompile.js
  */
@@ -10,7 +10,11 @@
 (function() {
 'use strict';
 
-/* Set the namespace here!  MY_NAMESPACE = 'foo' will produce:
+/**
+ * NOTE: It's best to change the namespace within the source code (located in
+ *   src/namespace.js) and then rebuild the distribution code via grunt
+ *
+ * Set the namespace here!  MY_NAMESPACE = 'foo' will produce:
  *   module: angular.module('room77.foo')
  *   directives: foo-watch, foo-deep-watch...
  *
@@ -63,12 +67,13 @@ angular.module('room77.' + MY_NAMESPACE, []);
 
     return RecompileCtrl;
   }
-})(); // End recompile controllers.
+})(); // End recompile controller
 
 (function() {
   'use strict';
 
-  /* An array of directives that can trigger a recompile
+  /**
+   * The recompile trigger directives are enumerated in the following array
    *
    * Object: {
    *   name: (in lowercase, separated by underscores) e.g. 'watch_collection'
@@ -82,6 +87,9 @@ angular.module('room77.' + MY_NAMESPACE, []);
    *
    * NOTE: the name will automatically be translated into the right syntaxes
    *   i.e. camelCase for directives and dash-separated for HTML attribute
+   * NOTE: the recompile namespace will be prepended to the directive
+   *   e.g. if MY_NAMESPACE = 'recompile', then the directive name for
+   *   'deep_watch' will be recompile-deep-watch
    */
   var recompile_triggers = [
     { name: 'watch'
@@ -146,11 +154,14 @@ angular.module('room77.' + MY_NAMESPACE, []);
 
   // recompile-stop-watch-if has to be paired with a recompile trigger
   module.directive(_AngularName('stop_watch_if'), function() {
-    return {
-      require: recompile_triggers_require_array.map(function(directive) {
-        // Only look for directives on this element
+    // Only need to look for recompile triggers on this element
+    var recompile_triggers_on_this_elt_require_array =
+      recompile_triggers_require_array.map(function(directive) {
         return directive.replace('^', '');
-      }),
+      });
+
+    return {
+      require: recompile_triggers_on_this_elt_require_array,
       link: function(scope, elt, attrs, Ctrls) {
         var ctrl_exists = false;
         for (var i = 0; i < Ctrls.length; i++) {
@@ -172,7 +183,8 @@ angular.module('room77.' + MY_NAMESPACE, []);
 
   /*** Private fns below ***/
 
-  /* Switches the name to camelCase and puts the desired namespace in front of
+  /**
+   * Switches the name to camelCase and puts the desired namespace in front of
    *   the name
    */
   function _AngularName(name) {
@@ -236,6 +248,11 @@ angular.module('room77.' + MY_NAMESPACE, []);
     return false;
   }
 
+  /**
+   * This is where the HTML is actually recompiled (we use the translude fn
+   *   that's passed by the link fn, and create a new $scope each time a
+   *   recompile is triggered)
+   */
   function _RecompileHtmlLinkFn() {
     return function(scope, elt, attrs, Ctrls, transclude_fn) {
       var RecompileCtrl = null,

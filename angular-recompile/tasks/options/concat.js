@@ -31,11 +31,11 @@
 
   function _OpeningComment() {
     return [
-      '/*',
+      '/**',
       ' * Recompile library for AngularJS',
       ' * version: TODO',
       ' *',
-      ' * NOTE: It\'s best to not directly edit this file.  Do a git clone on',
+      ' * NOTE: It\'s best to not directly edit this file.  Checkout',
       ' *   this repo and edit the files in src/.  Then run \'grunt\' on the',
       ' *   command line to rebuild dist/recompile.js',
       ' */'
