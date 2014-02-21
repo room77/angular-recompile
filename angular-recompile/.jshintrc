@@ -1,0 +1,98 @@
+{
+  // Enforcing options: when set to true, produces more errors
+  "bitwise": true,
+  "camelcase": false,
+  "curly": false,
+  "eqeqeq": true,
+  "es3": true,
+  "forin": true,
+  "freeze": true,
+  "immed": true,
+  "indent": 2,
+  "latedef": "nofunc",
+  "newcap": false, // We use uppercase names for normal functions as well
+  "noarg": true,
+  "noempty": true,
+  "nonew": true,
+  "plusplus": false,
+  "quotmark": "single",
+  "undef": true, // See below for a list of globals
+  "unused": true,
+  "strict": true,
+  "trailing": true,
+  "maxparams": false, // Angular and RequireJS includes break this
+  "maxdepth": 4,
+  "maxstatements": 50,
+  "maxcomplexity": 4,
+  "maxlen": 80,
+
+  // Relaxing options: when set to true, produces fewer errors
+  "asi": false,
+  "boss": false,
+  "debug": false,
+  "eqnull": false,
+  "esnext": false,
+  "evil": false,
+  "expr": false,
+  "funcscope": false,
+  "gcl": false,
+  "globalstrict": false,
+  "iterator": false,
+  "lastsemic": false,
+  "laxbreak": false,
+  "laxcomma": false,
+  "loopfunc": false,
+  "maxerr": 50,
+  "moz": false,
+  "multistr": false,
+  "notypeof": false,
+  "proto": false,
+  "scripturl": false,
+  "smarttabs": false,
+  "shadow": false,
+  "sub": false,
+  "supernew": false,
+  "validthis": false,
+
+  // Environments and exposing globals
+  "browser": false,
+  "couch": false,
+  "devel": false,
+  "dojo": false,
+  "jquery": false,
+  "mootools": false,
+  "node": false,
+  "nonstandard": false,
+  "phantom": false,
+  "prototypejs": false,
+  "rhino": false,
+  "worker": false,
+  "wsh": false,
+  "yui": false,
+
+  "globals": {
+    // For AngularJS
+    "angular": true,
+
+    // Allow window (but not document, location, and other browser globals)
+    "window": true,
+
+    // Used by Gruntfiles
+    "module": true,
+    "require": true,
+
+    // Used by RequireJS
+    "define": true,
+
+    // Used by Jasmine
+    "beforeEach": true,
+    "describe": true,
+    "expect": true,
+    "it": true,
+    "jasmine": true,
+    "spyOn": true,
+
+    // Used by Angular mocks
+    "inject": true
+  }
+}
