@@ -54,6 +54,5 @@ To play with code
 * The namespace of all of the directives (default is `recompile`) can be changed in `src/namespace.js` (so if the namespace is `foo`, then the corresponding directives are `foo-when`, `foo-deep-watch`,  `foo-html`, etc.)
 
 TODO
-* make public
 * make it Bower-able
 * add necessary documentation
