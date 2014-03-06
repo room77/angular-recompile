@@ -44,13 +44,5 @@ define(['my_namespace', 'mocks'], function(MY_NAMESPACE) {
 
       expect(my_fn).not.toHaveBeenCalled();
     });
-
-    it('Cannot deregister a non-registered fn', function() {
-      var remove_invalid_fn = function() {
-        RecompileCtrl.DeregisterFn(function() {});
-      };
-
-      expect(remove_invalid_fn).toThrow();
-    });
   });
 });

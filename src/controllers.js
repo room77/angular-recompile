@@ -26,12 +26,9 @@
         if (angular.equals(fn, _recompile_fns[i])) break;
       }
 
-      // Throw error if removing a function not in this array
-      if (i >= _recompile_fns.length) {
-        throw 'Trying to remove fn not in recompile_fns array';
+      if (i < _recompile_fns.length) {
+        _recompile_fns.splice(i, 1);
       }
-
-      _recompile_fns.splice(i, 1);
     };
 
     $scope.$on('$destroy', function() {
