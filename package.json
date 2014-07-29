@@ -1,9 +1,9 @@
 {
   "name": "angular-recompile",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "TODO"
+    "url": "https://github.com/room77/angular-recompile"
   },
   "devDependencies": {
     "glob": "latest",
