@@ -1,15 +1,19 @@
 {
   "name": "angular-recompile",
-  "version": "0.0.0",
-  "homepage": "TODO",
+  "version": "0.0.1",
+  "homepage": "https://github.com/room77/angular-recompile",
   "authors": [
     "Holman Gao <holman@golmansax.com>"
   ],
   "license": "MIT",
   "ignore": [
     "**/.*",
-    "node_modules",
     "bower_components",
+    "Gruntfile.js",
+    "node_modules",
+    "package.json",
+    "src",
+    "tasks",
     "test",
     "tests"
   ],
