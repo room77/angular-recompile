@@ -13,7 +13,7 @@
     "grunt-contrib-jshint": "latest",
     "grunt-karma": "latest",
     "grunt-template-jasmine-istanbul": "~0.2",
-    "grunt-template-jasmine-requirejs": "latest",
+    "grunt-template-jasmine-requirejs": "~0.1",
     "load-grunt-tasks": "latest",
     "lodash": "latest"
   }
