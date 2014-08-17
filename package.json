@@ -6,12 +6,14 @@
     "url": "https://github.com/room77/angular-recompile"
   },
   "devDependencies": {
+    "coveralls": "latest",
     "glob": "latest",
     "grunt": "latest",
     "grunt-contrib-concat": "latest",
     "grunt-contrib-jasmine": "~0.5",
     "grunt-contrib-jshint": "latest",
     "grunt-karma": "latest",
+    "grunt-shell": "latest",
     "grunt-template-jasmine-istanbul": "~0.2",
     "grunt-template-jasmine-requirejs": "~0.1",
     "load-grunt-tasks": "latest",

@@ -20,6 +20,7 @@
     grunt.registerTask('build', ['lint', 'concat']);
     grunt.registerTask('lint', ['jshint']);
     grunt.registerTask('test', ['build', 'jasmine']);
+    grunt.registerTask('github', ['test', 'shell:coveralls']);
   };
 
   return;

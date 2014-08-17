@@ -18,8 +18,13 @@
 
       template: require('grunt-template-jasmine-istanbul'),
       templateOptions: {
-        coverage: 'coverage/coverage.json',
-        report: 'coverage',
+        coverage: 'coverage/lcov.info',
+        report: {
+          type: 'lcov',
+          options: {
+            dir: 'coverage'
+          }
+        },
 
         template: require('grunt-template-jasmine-requirejs'),
         templateOptions: {
