@@ -2,6 +2,8 @@ Recompile library for AngularJS
 ===
 
 [![Build Status](https://travis-ci.org/room77/angular-recompile.svg?branch=master)](https://travis-ci.org/room77/angular-recompile)
+[![Coverage Status](https://img.shields.io/coveralls/room77/angular-recompile.svg)](https://coveralls.io/r/room77/angular-recompile)
+
 
 Include `dist/recompile.js` to start using.
 
